@@ -1,0 +1,32 @@
+---
+title: "natural resources and corruption"
+author: "Emma Bea Mitchell"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(readr)
+```
+
+
+```{r}
+corruption <- read_csv(here("data", "corruption.csv"))
+
+natural_resources <- read_csv(here("data", "natural_resources.csv"))
+```
+
+Question: Does the percent of GDP from natural resources affect countries' corruption levels
+
+Hypothesis: The percent of GDP from natural resources has an effect countries' corruption levels
+
+Null hypothesis: The percent of GDP from natural resources has no effect on countries' corruption levels
+```{r}
+corrupt_resource <- full_join(corruption, natural_resources, by = c("Country / Territory" = "Country"))
+
+
+```
+
