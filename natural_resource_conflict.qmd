@@ -10,11 +10,12 @@ editor_options:
 library(tidyverse)
 library(here)
 library(readr)
+library(janitor)
 ```
 
 
 ```{r}
-corruption <- read_csv(here("data", "corruption.csv"))
+corruption <- read_csv(here("data", "2021_corruption.csv"))
 
 natural_resources <- read_csv(here("data", "natural_resources.csv"))
 ```
@@ -27,6 +28,20 @@ Null hypothesis: The percent of GDP from natural resources has no effect on coun
 ```{r}
 corrupt_resource <- full_join(corruption, natural_resources, by = c("Country / Territory" = "Country"))
 
+corrupt_resource_clean <- corrupt_resource |> 
+  rename("country" = "Country / Territory") |> 
+  clean_names() 
+
+corrupt_resource_select <- corrupt_resource_clean |> 
+  select(country, cpi_score_2021, rank, total_natural_resources_rents_percent_of_gdp, oil_rents_percent_of_gdp, natural_gas_rents_percent_of_gdp, coal_rents_percent_of_gdp, mineral_rents_percent_of_gdp, forest_rents_percent_of_gdp)
+```
+
+```{r}
+corrupt_resource_select$cpi_score_2021 <- as.numeric(corrupt_resource_select$cpi_score_2021, na.rm = TRUE)
+
+corrupt_resource_select$total_natural_resources_rents_percent_of_gdp <- as.numeric(corrupt_resource_select$total_natural_resources_rents_percent_of_gdp, na.rm = TRUE)
+
+  
 
 ```
 
