@@ -22,10 +22,12 @@ natural_resources <- read_csv(here("data", "natural_resources.csv"))
 
 Question: Does the percent of GDP from natural resources affect countries' corruption levels
 
-Hypothesis: The percent of GDP from natural resources has an effect countries' corruption levels
+Hypothesis: The percent of GDP from natural resources has an effect countries' corruption levels 
 
 Null hypothesis: The percent of GDP from natural resources has no effect on countries' corruption levels
 ```{r}
+natural_resources <- natural_resources[1:217, ]
+
 corrupt_resource <- full_join(corruption, natural_resources, by = c("Country / Territory" = "Country"))
 
 corrupt_resource_clean <- corrupt_resource |> 
@@ -33,15 +35,43 @@ corrupt_resource_clean <- corrupt_resource |>
   clean_names() 
 
 corrupt_resource_select <- corrupt_resource_clean |> 
-  select(country, cpi_score_2021, rank, total_natural_resources_rents_percent_of_gdp, oil_rents_percent_of_gdp, natural_gas_rents_percent_of_gdp, coal_rents_percent_of_gdp, mineral_rents_percent_of_gdp, forest_rents_percent_of_gdp)
+  select(country, iso3, cpi_score_2021,total_natural_resources_rents_percent_of_gdp, oil_rents_percent_of_gdp, natural_gas_rents_percent_of_gdp, coal_rents_percent_of_gdp, mineral_rents_percent_of_gdp, forest_rents_percent_of_gdp)
 ```
 
 ```{r}
-corrupt_resource_select$cpi_score_2021 <- as.numeric(corrupt_resource_select$cpi_score_2021, na.rm = TRUE)
+corrupt_resource_select$cpi_score_2021 <- as.numeric(corrupt_resource_select$cpi_score_2021)
 
-corrupt_resource_select$total_natural_resources_rents_percent_of_gdp <- as.numeric(corrupt_resource_select$total_natural_resources_rents_percent_of_gdp, na.rm = TRUE)
+corrupt_resource_select$total_natural_resources_rents_percent_of_gdp <- as.numeric(corrupt_resource_select$total_natural_resources_rents_percent_of_gdp)
 
-  
+ggplot(corrupt_resource_select, aes(x=total_natural_resources_rents_percent_of_gdp, y = cpi_score_2021)) +
+  geom_point()
+
+summary(lm(cpi_score_2021 ~ total_natural_resources_rents_percent_of_gdp, data = corrupt_resource_select))
 
 ```
+
+
+```{r}
+regime <- read_csv(here("data", "political-regime.csv"))
+
+regime_clean <- regime |> 
+  rename("country" = "Entity") |> 
+  clean_names() 
+
+# Replace numeric values with descriptive labels
+regime_clean <- regime_clean %>%
+  mutate(political_regime = case_when(
+    political_regime == 0 ~ "closed_autocracies",
+    political_regime == 1 ~ "electoral_autocracies",
+    political_regime == 2 ~ "electoral_democracies",
+    political_regime == 3 ~ "liberal_democracies"
+  ))
+
+corrupt_nat_dem <- full_join(corrupt_resource_select, regime_clean, by = c("iso3" = "code"))
+
+corrupt_nat_dem_select <- corrupt_nat_dem[1:180, ] |> 
+  select(-country.y, -time, -year)
+
+ggplot(corrupt_nat_dem_select, aes(x = total_natural_resources_rents_percent_of_gdp, y = cpi_score_2021))
+`````````
 
