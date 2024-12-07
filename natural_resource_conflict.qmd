@@ -1,12 +1,45 @@
 ---
-title: "natural resources and corruption"
+title: "Natural Resources and Corruption"
 author: "Emma Bea Mitchell"
 format: html
 editor_options: 
   chunk_output_type: console
 ---
 
+**Question: Does the percent of GDP from natural resources affect countries' corruption levels?**
+
+Hypothesis: The percentage of GDP from natural resources has an effect countries' corruption levels
+
+Null hypothesis: The percent of GDP from natural resources has no effect on countries' corruption levels
+
+## Sources
+
+### Corruption Perception Index
+
+<img src="https://images.transparencycdn.org/images/CPI2021_Map_EN_2022-01-24-142835_wbln.jpg" alt="Corruption Perception Index 2021 Map" width="500"/>
+
+Our data comes from two different sources. The first source is for our corruption level data. We used a dataset from *Transparency International*, an organization that works to fight corruption worldwide. The organization has many facets, including a think tank, a UNESCO consultant, and is involved in the UN.
+
+They created a corruption perceptions index, which measures levels of corruption in 180 countries around the world from 0 (highly corrupt) to 100 (very clean). Transparency International takes data from 13 sources, such as banks, think tanks, and research advisory firms around the world. Each of these organizations ask leading experts in their field multiple questions that can be used to gage corruption levels. Some sources only cover specific regions or continents, while others cover the majority of the world. Transparency International then takes the information and standardizes it on a scale of zero to one hundred,"this standardisation is done by subtracting the mean of each source in the baseline year from each country score and then dividing by the standard deviation of that source in the baseline year [and]... ...transformed to the CPI scale by multiplying with the value of the CPI standard deviation in 2012 (20) and adding the mean of CPI in 2012 (45), so that the data set fits the CPI’s 0-100 scale" (CPI report short methodology 2021). They then calculate the average for each country to find their published score.
+
+#### Limitations of the data
+
+The data itself, as well as the way I use it comes with some caveats. Firstly, Transparency International uses varying organizations to get these scores, which in turn use varying methods to get their scores. Although the scores are then standardized, it is still not a completely equal comparison for every single country. In my statistical analysis, I use this corruption **perception** index as a true corruption index for each country. There are clearly limitations to what anyone can truly know about the country in their country, and this index simply measures perceptions for that very reason, but for the purposes of my calculations I treat these numbers as true and fair values. In order to simplify my analysis, I am also not including the standard errors for these values, which could potentially oversimplify the results of the index.
+
+Transparency International. (2021). 2021 Corruptions Perceptions Index . Transparency.org. https://www.transparency.org/en/cpi/2021.
+
+### Percent of GDP from Natural Resources
+
+The natural resource data comes from the World Bank Group, 
+
+
+
 ```{r}
+#| collapse: true
+#|code-fold: true
+#|output: false
+#|quiet: true
+# read in libraries
 library(tidyverse)
 library(here)
 library(readr)
@@ -15,16 +48,12 @@ library(janitor)
 
 
 ```{r}
+# read in data
 corruption <- read_csv(here("data", "2021_corruption.csv"))
 
 natural_resources <- read_csv(here("data", "natural_resources.csv"))
 ```
 
-Question: Does the percent of GDP from natural resources affect countries' corruption levels
-
-Hypothesis: The percent of GDP from natural resources has an effect countries' corruption levels 
-
-Null hypothesis: The percent of GDP from natural resources has no effect on countries' corruption levels
 ```{r}
 natural_resources <- natural_resources[1:217, ]
 
@@ -44,12 +73,15 @@ corrupt_resource_select$cpi_score_2021 <- as.numeric(corrupt_resource_select$cpi
 corrupt_resource_select$total_natural_resources_rents_percent_of_gdp <- as.numeric(corrupt_resource_select$total_natural_resources_rents_percent_of_gdp)
 
 ggplot(corrupt_resource_select, aes(x=total_natural_resources_rents_percent_of_gdp, y = cpi_score_2021)) +
-  geom_point()
+  geom_point() +
+  xlab("percent of GDP from natural resources") +
+  ylab("corruption perception index") +
+  labs(title = "Natural Resource's affect on countries' corruption levels") +
+  theme_dark()
 
 summary(lm(cpi_score_2021 ~ total_natural_resources_rents_percent_of_gdp, data = corrupt_resource_select))
 
 ```
-
 
 ```{r}
 regime <- read_csv(here("data", "political-regime.csv"))
@@ -72,6 +104,29 @@ corrupt_nat_dem <- full_join(corrupt_resource_select, regime_clean, by = c("iso3
 corrupt_nat_dem_select <- corrupt_nat_dem[1:180, ] |> 
   select(-country.y, -time, -year)
 
-ggplot(corrupt_nat_dem_select, aes(x = total_natural_resources_rents_percent_of_gdp, y = cpi_score_2021))
-`````````
+ggplot(corrupt_nat_dem_select, aes(x = total_natural_resources_rents_percent_of_gdp, y = cpi_score_2021, color = political_regime)) +
+  geom_point() +
+   xlab("percent of GDP from natural resources") +
+  ylab("corruption perception index") +
+  labs(title = "Natural Resource's affect on countries' corruption levels",
+       color = "Political regime") +
+  theme_grey()
 
+
+summary(lm(total_natural_resources_rents_percent_of_gdp ~ cpi_score_2021 + political_regime +cpi_score_2021:political_regime, data = corrupt_nat_dem_select))
+
+summary(lm(cpi_score_2021 ~ political_regime, data = corrupt_nat_dem_select))
+
+ggplot(corrupt_nat_dem_select, aes(x = political_regime, y = cpi_score_2021)) +
+  geom_boxplot()
+
+ggplot(corrupt_nat_dem_select, aes(x = political_regime, y = cpi_score_2021)) +
+  geom_col() 
+```
+
+```{r}
+ggplot(corrupt_nat_dem_select, aes(x = total_natural_resources_rents_percent_of_gdp, y = cpi_score_2021, color = political_regime)) +
+  geom_point() +
+  facet_wrap(~political_regime) 
+  
+```
