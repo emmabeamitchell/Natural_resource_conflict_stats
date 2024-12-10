@@ -69,6 +69,7 @@ library(here)
 library(readr)
 library(janitor)
 library(sjPlot)
+library(spdep)
 ```
 
 ```{r}
@@ -284,25 +285,77 @@ My solution to the low R squared value was to add another variable, as it was qu
 
 If I had more time I would have continued exploring more variables. Developed versus developing country, overall GDP amount, and economic systems would all be interesting to analyze in relation to corruption and natural resources. I am also skeptical that a linear model is truly the correct model to be using in this situation, as corruption is very complex and probably not a completely linear issue. 
 
-When we look at the residuals of our original linear model, we see that they are clumped on the far right side of the graph. I believe that indicates where there is a large clump of data points around the less than 2% GDP mark. 
-
 ```{r}
-res <- resid(lm1)
+geo <- read_csv(here("data", "world_country_lat_long.csv")) |> 
+  select(country_code, latitude, longitude, country)
 
-plot(fitted(lm1), res)
-
-abline(0,0)
+geo_join <- full_join(corrupt_resource_select, geo, by = c("country" = "country")) 
+geo_join <- geo_join[1:153, ] |> 
+  filter(!is.na(latitude))
 ```
 
-Let's look at what countries are in that clump
-
 ```{r}
-low_percent <- corrupt_resource_select |> 
-  filter(total_natural_resources_rents_percent_of_gdp < 2)
-print(dim(low_percent))
+geo_lm <- lm(cpi_score_2021 ~ total_natural_resources_rents_percent_of_gdp, data = geo_join)
+
+geo_join$residual <- resid(geo_lm)
+coords <- as.matrix(geo_join[, c("longitude", "latitude")]) 
+geo_join.nb <- dnearneigh(coords, d1 = 0, d2 = 50)
+geo_join.lw <- nb2listw(geo_join.nb, style = "W", zero.policy = FALSE)
+inc.lag <- lag.listw(geo_join.lw, geo_join$residual)
+tibble(residual = geo_join$residual, neighborhood = inc.lag) |> 
+  ggplot(aes(residual, neighborhood)) +
+  geom_point() 
 ```
 
-There are 75 countries that have a GDP percentage under 2 from natural resources. They are not geographically related, Europe has 36 countries, Asia has 17, Africa has 8, the Americas have 12, Oceania has 2. They are not all developed or undeveloped, 29 are developed and 46 are developing. Without more time, we can't fully examine the relationship between the countries in this cluster.
+
+```{r}
+# Compute Moran's I for the residuals
+moran_test <- moran.test(geo_join$residual, geo_join.lw, zero.policy = TRUE)
+
+# Print the Moran's I test results
+print(moran_test)
+
+observed_morans_i <- moran_test$estimate["Moran I"]
+print(observed_morans_i)
+```
+
+```{r}
+set.seed(123)  # For reproducibility
+n_permutations <- 1000
+null_distribution <- numeric(n_permutations)
+
+for (i in 1:n_permutations) {
+  geo_join$permuted_cpi <- sample(geo_join$cpi_score_2021)
+  permuted_model <- lm(permuted_cpi ~ total_natural_resources_rents_percent_of_gdp, data = geo_join)
+  null_distribution[i] <- coef(permuted_model)[2]  # Slope of the model
+}
+
+library(ggplot2)
+
+null_dist_df <- data.frame(null_distribution)
+
+ggplot(null_dist_df, aes(x = null_distribution)) +
+  geom_histogram(binwidth = 0.01, color = "black", fill = "skyblue") +
+ geom_vline(xintercept = observed_morans_i, color = "red", linetype = "dotted") +
+  labs(
+    title = "Null Distribution of the Slope",
+    x = "Slope under the Null Hypothesis",
+    y = "Frequency"
+  )
+
+
+```
+
+```{r}
+geo_join.nb <- dnearneigh(coords, d1 = 0, d2 = 50)
+geo_join.lw <- nb2listw(geo_join.nb, style = "W")
+sperr_mod <- spatialreg::errorsarlm(cpi_score_2021 ~ total_natural_resources_rents_percent_of_gdp,
+                        data = geo_join,
+                        listw = geo_join.lw)
+summary(sperr_mod)
+
+```
+
 
 
 Full acknowledgements:
