@@ -114,7 +114,8 @@ corrupt_resource_select$total_natural_resources_rents_percent_of_gdp <- as.numer
 
 # exclude outliers
 corrupt_resource_select <- corrupt_resource_select |> 
-  filter(total_natural_resources_rents_percent_of_gdp <= 40)
+  filter(total_natural_resources_rents_percent_of_gdp <= 40) |> 
+  filter(!is.na(cpi_score_2021))
 ```
 
 ### Make a preliminary plot
@@ -273,7 +274,7 @@ lm2 <- lm(total_natural_resources_rents_percent_of_gdp ~ cpi_score_2021 + politi
 tab_model(lm2)
 ```
 
-The first thing I notice when I look at our results. Besides the intercept, every single p-value is far above .05, which makes them all statistically insignificant. Therefore we fail to reject the null hypothesis. It makes sense to me that this interaction is insignificant, because the slopes we were getting were very surprising and didn't make much logical sense to me. We cannot assume that any of the interaction trends we saw were not just due to chance. 
+The first thing I notice when I look at our results are that most p-values are above .05, which makes them all statistically insignificant. Therefore we fail to reject the null hypothesis.  The only one that is significant is the electoral autocracies, although because the other values are not statistically significant, it's hard for me to trust the electoral autocracy coefficients independent of the other values. It makes sense to me that this interaction is insignificant, because the slopes we were getting were very surprising and didn't make much logical sense to me. We cannot assume that any of the interaction trends we saw were not just due to chance.
 
 ## Summarizing our results
 
@@ -283,6 +284,8 @@ My solution to the low R squared value was to add another variable, as it was qu
 
 If I had more time I would have continued exploring more variables. Developed versus developing country, overall GDP amount, and economic systems would all be interesting to analyze in relation to corruption and natural resources. I am also skeptical that a linear model is truly the correct model to be using in this situation, as corruption is very complex and probably not a completely linear issue. 
 
+When we look at the residuals of our original linear model, we see that they are clumped on the far right side of the graph. I believe that indicates where there is a large clump of data points around the less than 2% GDP mark. 
+
 ```{r}
 res <- resid(lm1)
 
@@ -291,11 +294,15 @@ plot(fitted(lm1), res)
 abline(0,0)
 ```
 
+Let's look at what countries are in that clump
+
 ```{r}
 low_percent <- corrupt_resource_select |> 
-  filter(total_natural_resources_rents_percent_of_gdp == 0)
-
+  filter(total_natural_resources_rents_percent_of_gdp < 2)
+print(dim(low_percent))
 ```
+
+There are 75 countries that have a GDP percentage under 2 from natural resources. They are not geographically related, Europe has 36 countries, Asia has 17, Africa has 8, the Americas have 12, Oceania has 2. They are not all developed or undeveloped, 29 are developed and 46 are developing. Without more time, we can't fully examine the relationship between the countries in this cluster.
 
 
 Full acknowledgements:

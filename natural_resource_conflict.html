@@ -204,7 +204,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Change total natural resource data to numeric as well</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>corrupt_resource_select<span class="sc">$</span>total_natural_resources_rents_percent_of_gdp <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(corrupt_resource_select<span class="sc">$</span>total_natural_resources_rents_percent_of_gdp)</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: NAs introduced by coercion</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: NAs introduced by coercion</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude outliers</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>corrupt_resource_select <span class="ot">&lt;-</span> corrupt_resource_select <span class="sc">|&gt;</span> </span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total_natural_resources_rents_percent_of_gdp <span class="sc">&lt;=</span> <span class="dv">40</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(cpi_score_2021))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -221,9 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Natural Resource's affect on countries' corruption levels"</span>) <span class="sc">+</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_grey</span>() </span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(first_plot)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 85 rows containing missing values or values outside the scale range</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">## (`geom_point()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(first_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -260,24 +263,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">(Intercept)</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">48.33</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">44.92&nbsp;–&nbsp;51.75</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">48.35</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">44.82&nbsp;–&nbsp;51.88</td>
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">total natural resources<br>
 rents percent of gdp</td>
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.54</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.81&nbsp;–&nbsp;-0.27</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.86&nbsp;–&nbsp;-0.23</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>0.001</strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">Observations</td>
-<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">155</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">153</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">R<sup>2</sup> / R<sup>2</sup> adjusted</td>
-<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.094 / 0.088</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.072 / 0.066</td>
 </tr>
 </tbody>
 </table>
@@ -286,8 +289,8 @@ rents percent of gdp</td>
 </div>
 </div>
 <p>There are a few numbers here that are of interest to us. First let’s look at the intercept and the total_natural_resources_rents_percent_of_gdp (the slope). According to our model, if our hypothetical country had no GDP resulting from natural resources, then the corruption level would be at 48. We could maybe buy this if we hadn’t looked at the graph, but when we look at our data points visually it looks like our intercept is really just halfway in between our huge cluster of points around zero that seem to be evenly dispersed on the y axis. When looking at the slope we can also see that it’s very small. Each percentage point increase in GDP results in a less than 1 index level decrease.</p>
-<p>The p-values for both our intercept and slope are very small. Our intercept is less than .000000000000000002 (essentially zero for our purposes) and our slope has a p-value of .000106, also a very small number. Both are far below .05, the number needed for a value to be statistically significant. So if these values are both statistically significant, why do I still not trust that it’s meaningful?</p>
-<p>Let’s look at adjusted R squared value. It’s about 0.09. R squared is always a value from 0 to 1, where 0 means that the model explains essentially zero percent of the change in y, and 1 means that the model is the perfect fit and the variable explains 100 percent of the change in y. Our value is less than .1, essentially meaning that the percent of GDP from natural resources explains less than 10 percent of the corruption levels in countries. So our model is statistically significant but explains very little of corruption levels.</p>
+<p>The p-values for both our intercept and slope are very small. Our intercept is less than .001 (essentially zero for our purposes) and our slope has a p-value of .000106, also a very small number. Both are far below .05, the number needed for a value to be statistically significant. So if these values are both statistically significant, why do I still not trust that it’s meaningful?</p>
+<p>Let’s look at adjusted R squared value. It’s about 0.07. R squared is always a value from 0 to 1, where 0 means that the model explains essentially zero percent of the change in y, and 1 means that the model is the perfect fit and the variable explains 100 percent of the change in y. Our value is less than .1, essentially meaning that the percent of GDP from natural resources explains just over 7 percent of the corruption levels in countries. So our model is statistically significant but explains very little of corruption levels.</p>
 <p>This makes sense when we look at our graph with our best fit line. If we squint at the graph, we can <em>maybe</em> see a correlation, but it’s certainly a stretch. The graph, along with our linear model summary, makes us think that there is definitely omitted variable bias here.</p>
 <div class="cell">
 <details class="code-fold">
@@ -301,11 +304,7 @@ rents percent of gdp</td>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">geom_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> x,</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">method =</span> lm)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(smooth_plot)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 85 rows containing non-finite outside the scale range</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="do">## (`stat_smooth()`).</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 85 rows containing missing values or values outside the scale range</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="do">## (`geom_point()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(smooth_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -396,9 +395,9 @@ rents percent of gdp</td>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_hue</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"closed autocracies"</span>, <span class="st">"electorial autocracies"</span>, <span class="st">"electoral democracies"</span>, <span class="st">"liberal democracies"</span>))</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(regime_plot)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 25 rows containing non-finite outside the scale range</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 27 rows containing non-finite outside the scale range</span></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="do">## (`stat_smooth()`).</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 25 rows containing missing values or values outside the scale range</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 27 rows containing missing values or values outside the scale range</span></span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="do">## (`geom_point()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
@@ -438,68 +437,68 @@ rents percent of gdp</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">(Intercept)</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">11.75</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">1.05&nbsp;–&nbsp;22.44</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>0.032</strong></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">1.75</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-8.05&nbsp;–&nbsp;11.54</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.725</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">cpi score 2021</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.04</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.24&nbsp;–&nbsp;0.31</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.780</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.24</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.00&nbsp;–&nbsp;0.49</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.054</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">political regime<br>
 [electoral_autocracies]</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">4.46</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-9.14&nbsp;–&nbsp;18.06</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.518</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">12.22</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.02&nbsp;–&nbsp;24.47</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.050</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">political regime<br>
 [electoral_democracies]</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">2.21</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-13.87&nbsp;–&nbsp;18.30</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.786</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">12.21</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-2.05&nbsp;–&nbsp;26.48</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.093</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">political regime<br>
 [liberal_democracies]</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-11.75</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-37.80&nbsp;–&nbsp;14.31</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.374</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-1.74</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-24.48&nbsp;–&nbsp;21.00</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.880</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">cpi score 2021 ×<br>
 political regime<br>
 [electoral_autocracies]</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.22</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.59&nbsp;–&nbsp;0.15</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.236</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.38</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.70&nbsp;–&nbsp;-0.05</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>0.023</strong></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">cpi score 2021 ×<br>
 political regime<br>
 [electoral_democracies]</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.22</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.61&nbsp;–&nbsp;0.17</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.262</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.43</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.77&nbsp;–&nbsp;-0.08</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>0.016</strong></td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">cpi score 2021 ×<br>
 political regime<br>
 [liberal_democracies]</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.01</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.44&nbsp;–&nbsp;0.41</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.956</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.22</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">-0.59&nbsp;–&nbsp;0.16</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.258</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">Observations</td>
-<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">152</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">150</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">R<sup>2</sup> / R<sup>2</sup> adjusted</td>
-<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.148 / 0.107</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.158 / 0.116</td>
 </tr>
 </tbody>
 </table>
@@ -507,7 +506,7 @@ political regime<br>
 
 </div>
 </div>
-<p>The first thing I notice when I look at our results. Besides the intercept, every single p-value is far above .05, which makes them all statistically insignificant. Therefore we fail to reject the null hypothesis. It makes sense to me that this interaction is insignificant, because the slopes we were getting were very surprising and didn’t make much logical sense to me. We cannot assume that any of the interaction trends we saw were not just due to chance.</p>
+<p>The first thing I notice when I look at our results are that most p-values are above .05, which makes them all statistically insignificant. Therefore we fail to reject the null hypothesis. The only one that is significant is the electoral autocracies, although because the other values are not statistically significant, it’s hard for me to trust the electoral autocracy coefficients independent of the other values. It makes sense to me that this interaction is insignificant, because the slopes we were getting were very surprising and didn’t make much logical sense to me. We cannot assume that any of the interaction trends we saw were not just due to chance.</p>
 </section>
 </section>
 </section>
@@ -516,6 +515,31 @@ political regime<br>
 <p>Our results are overall inconclusive. Our first linear model just looked at the percent of GDP from natural resources. There was no an obvious correlation from just looking at the data points on the graph, but our line of best fit revealed a negative slope, revealing that as the percent of GDP goes up, the corruption also goes up (a lower index number = more corruption). Although these results were statistically significant, the adjusted R squared value revealed that it only explained about nine percent of the corruption levels in countries around the world.</p>
 <p>My solution to the low R squared value was to add another variable, as it was quite likely we had omitted variable bias. I decided to add political regime type as our additional variable. I logically assumed that the regime type would have differing affects on the relationship. When I added in political regimes however, I saw that my results were no longer statistically significant.</p>
 <p>If I had more time I would have continued exploring more variables. Developed versus developing country, overall GDP amount, and economic systems would all be interesting to analyze in relation to corruption and natural resources. I am also skeptical that a linear model is truly the correct model to be using in this situation, as corruption is very complex and probably not a completely linear issue.</p>
+<p>When we look at the residuals of our original linear model, we see that they are clumped on the far right side of the graph. I believe that indicates where there is a large clump of data points around the less than 2% GDP mark.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">resid</span>(lm1)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">fitted</span>(lm1), res)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>,<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="natural_resource_conflict_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Let’s look at what countries are in that clump</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>low_percent <span class="ot">&lt;-</span> corrupt_resource_select <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total_natural_resources_rents_percent_of_gdp <span class="sc">&lt;</span> <span class="dv">2</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dim</span>(low_percent))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 75  9</code></pre>
+</div>
+</div>
+<p>There are 75 countries that have a GDP percentage under 2 from natural resources. They are not geographically related, Europe has 36 countries, Asia has 17, Africa has 8, the Americas have 12, Oceania has 2. They are not all developed or undeveloped, 29 are developed and 46 are developing. Without more time, we can’t fully examine the relationship between the countries in this cluster.</p>
 <p>Full acknowledgements:</p>
 <table class="caption-top table">
 <colgroup>
