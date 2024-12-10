@@ -111,6 +111,10 @@ corrupt_resource_select$cpi_score_2021 <- as.numeric(corrupt_resource_select$cpi
 
 # Change total natural resource data to numeric as well
 corrupt_resource_select$total_natural_resources_rents_percent_of_gdp <- as.numeric(corrupt_resource_select$total_natural_resources_rents_percent_of_gdp)
+
+# exclude outliers
+corrupt_resource_select <- corrupt_resource_select |> 
+  filter(total_natural_resources_rents_percent_of_gdp <= 40)
 ```
 
 ### Make a preliminary plot
@@ -141,9 +145,9 @@ tab_model(lm1)
 
 There are a few numbers here that are of interest to us. First let's look at the intercept and the total_natural_resources_rents_percent_of_gdp (the slope). According to our model, if our hypothetical country had no GDP resulting from natural resources, then the corruption level would be at 48. We could maybe buy this if we hadn't looked at the graph, but when we look at our data points visually it looks like our intercept is really just halfway in between our huge cluster of points around zero that seem to be evenly dispersed on the y axis. When looking at the slope we can also see that it's very small. Each percentage point increase in GDP results in a less than 1 index level decrease.
 
-The p-values for both our intercept and slope are very small. Our intercept is less than .000000000000000002 (essentially zero for our purposes) and our slope has a p-value of .000106, also a very small number. Both are far below .05, the number needed for a value to be statistically significant. So if these values are both statistically significant, why do I still not trust that it's meaningful?
+The p-values for both our intercept and slope are very small. Our intercept is less than .001 (essentially zero for our purposes) and our slope has a p-value of .000106, also a very small number. Both are far below .05, the number needed for a value to be statistically significant. So if these values are both statistically significant, why do I still not trust that it's meaningful?
 
-Let's look at adjusted R squared value. It's about 0.09. R squared is always a value from 0 to 1, where 0 means that the model explains essentially zero percent of the change in y, and 1 means that the model is the perfect fit and the variable explains 100 percent of the change in y. Our value is less than .1, essentially meaning that the percent of GDP from natural resources explains less than 10 percent of the corruption levels in countries. So our model is statistically significant but explains very little of corruption levels.
+Let's look at adjusted R squared value. It's about 0.07. R squared is always a value from 0 to 1, where 0 means that the model explains essentially zero percent of the change in y, and 1 means that the model is the perfect fit and the variable explains 100 percent of the change in y. Our value is less than .1, essentially meaning that the percent of GDP from natural resources explains just over 7 percent of the corruption levels in countries. So our model is statistically significant but explains very little of corruption levels.
 
 This makes sense when we look at our graph with our best fit line. If we squint at the graph, we can *maybe* see a correlation, but it's certainly a stretch. The graph, along with our linear model summary, makes us think that there is definitely omitted variable bias here.
 
@@ -251,7 +255,8 @@ regime_plot <- ggplot(corrupt_nat_dem_select, aes(x = total_natural_resources_re
   theme_grey() +
   geom_smooth(formula = y ~ x,
               se = FALSE,
-              method = lm)
+              method = lm) +
+  scale_color_hue(labels = c("closed autocracies", "electorial autocracies", "electoral democracies", "liberal democracies"))
 
 print(regime_plot)
 ```
@@ -278,5 +283,29 @@ My solution to the low R squared value was to add another variable, as it was qu
 
 If I had more time I would have continued exploring more variables. Developed versus developing country, overall GDP amount, and economic systems would all be interesting to analyze in relation to corruption and natural resources. I am also skeptical that a linear model is truly the correct model to be using in this situation, as corruption is very complex and probably not a completely linear issue. 
 
-https://www.sscnet.ucla.edu/polisci/faculty/ross/papers/working/Ross%20-%20Politics%20of%20the%20resource%20curse.pdf?form=MG0AV3 
+```{r}
+res <- resid(lm1)
 
+plot(fitted(lm1), res)
+
+abline(0,0)
+```
+
+```{r}
+low_percent <- corrupt_resource_select |> 
+  filter(total_natural_resources_rents_percent_of_gdp == 0)
+
+```
+
+
+Full acknowledgements:
+
+
+| Use:                       | Citation:                                                                                                                                                                                            |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Resource curse information | Ross, M. L. (2013). The Politics of the Resource Curse: A Review. SSRN Electronic Journal. https://doi.org/10.2139/ssrn.2342668                                                                      |
+| Natural resources data     | World Development Indicators. The World Bank. (2015). Worldbank.org. https://wdi.worldbank.org/table/3.14#                                                                                           |
+| Corruption index data      | Transparency International. (2021). 2021 Corruptions Perceptions Index. Transparency.org. https://www.transparency.org/en/cpi/2021.                                                                  |
+| Political regime data      | Political regime. (n.d.). Our World in Data. https://ourworldindata.org/grapher/political-regime?time=2021                                                                                           |
+| Political regime metadata  | Herre, B. (2021, December 2). The “Regimes of the World” data: how do researchers identify which countries are democracies?  Our World in Data. https://ourworldindata.org/regimes-of-the-world-data |
+| Reference course materials | Max Czapanskiy. EDS 222 Statistics for Environmental Data Science graduate course at the Bren School of Environmental  Science and Management at UCSB                                                |

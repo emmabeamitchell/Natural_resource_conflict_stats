@@ -392,13 +392,14 @@ rents percent of gdp</td>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_grey</span>() <span class="sc">+</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> x,</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">se =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">method =</span> lm)</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(regime_plot)</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 25 rows containing non-finite outside the scale range</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="do">## (`stat_smooth()`).</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 25 rows containing missing values or values outside the scale range</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="do">## (`geom_point()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">method =</span> lm) <span class="sc">+</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_hue</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"closed autocracies"</span>, <span class="st">"electorial autocracies"</span>, <span class="st">"electoral democracies"</span>, <span class="st">"liberal democracies"</span>))</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(regime_plot)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 25 rows containing non-finite outside the scale range</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="do">## (`stat_smooth()`).</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="do">## Warning: Removed 25 rows containing missing values or values outside the scale range</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="do">## (`geom_point()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -515,7 +516,45 @@ political regime<br>
 <p>Our results are overall inconclusive. Our first linear model just looked at the percent of GDP from natural resources. There was no an obvious correlation from just looking at the data points on the graph, but our line of best fit revealed a negative slope, revealing that as the percent of GDP goes up, the corruption also goes up (a lower index number = more corruption). Although these results were statistically significant, the adjusted R squared value revealed that it only explained about nine percent of the corruption levels in countries around the world.</p>
 <p>My solution to the low R squared value was to add another variable, as it was quite likely we had omitted variable bias. I decided to add political regime type as our additional variable. I logically assumed that the regime type would have differing affects on the relationship. When I added in political regimes however, I saw that my results were no longer statistically significant.</p>
 <p>If I had more time I would have continued exploring more variables. Developed versus developing country, overall GDP amount, and economic systems would all be interesting to analyze in relation to corruption and natural resources. I am also skeptical that a linear model is truly the correct model to be using in this situation, as corruption is very complex and probably not a completely linear issue.</p>
-<p>https://www.sscnet.ucla.edu/polisci/faculty/ross/papers/working/Ross%20-%20Politics%20of%20the%20resource%20curse.pdf?form=MG0AV3</p>
+<p>Full acknowledgements:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 87%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Use:</th>
+<th>Citation:</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Resource curse information</td>
+<td>Ross, M. L. (2013). The Politics of the Resource Curse: A Review. SSRN Electronic Journal. https://doi.org/10.2139/ssrn.2342668</td>
+</tr>
+<tr class="even">
+<td>Natural resources data</td>
+<td>World Development Indicators. The World Bank. (2015). Worldbank.org. https://wdi.worldbank.org/table/3.14#</td>
+</tr>
+<tr class="odd">
+<td>Corruption index data</td>
+<td>Transparency International. (2021). 2021 Corruptions Perceptions Index. Transparency.org. https://www.transparency.org/en/cpi/2021.</td>
+</tr>
+<tr class="even">
+<td>Political regime data</td>
+<td>Political regime. (n.d.). Our World in Data. https://ourworldindata.org/grapher/political-regime?time=2021</td>
+</tr>
+<tr class="odd">
+<td>Political regime metadata</td>
+<td>Herre, B. (2021, December 2). The “Regimes of the World” data: how do researchers identify which countries are democracies? Our World in Data. https://ourworldindata.org/regimes-of-the-world-data</td>
+</tr>
+<tr class="even">
+<td>Reference course materials</td>
+<td>Max Czapanskiy. EDS 222 Statistics for Environmental Data Science graduate course at the Bren School of Environmental Science and Management at UCSB</td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 
