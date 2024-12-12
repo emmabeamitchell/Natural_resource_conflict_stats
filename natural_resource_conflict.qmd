@@ -299,12 +299,15 @@ geo_lm <- lm(cpi_score_2021 ~ total_natural_resources_rents_percent_of_gdp, data
 
 geo_join$residual <- resid(geo_lm)
 coords <- as.matrix(geo_join[, c("longitude", "latitude")]) 
-geo_join.nb <- dnearneigh(coords, d1 = 0, d2 = 50)
+
+geo_join_sf <- st_as_sf(geo_join, 
+                        coords = c("longitude", "latitude"),
+                        crs = "EPSG:4326")
+
+geo_join.nb <- dnearneigh(geo_join_sf, d1 = 0, d2 = 5000)
 geo_join.lw <- nb2listw(geo_join.nb, style = "W", zero.policy = FALSE)
-inc.lag <- lag.listw(geo_join.lw, geo_join$residual)
-tibble(residual = geo_join$residual, neighborhood = inc.lag) |> 
-  ggplot(aes(residual, neighborhood)) +
-  geom_point() 
+
+
 ```
 
 
@@ -315,47 +318,13 @@ moran_test <- moran.test(geo_join$residual, geo_join.lw, zero.policy = TRUE)
 # Print the Moran's I test results
 print(moran_test)
 
-observed_morans_i <- moran_test$estimate["Moran I"]
-print(observed_morans_i)
+world <- spData::world
+
+ggplot() + 
+  geom_sf(data = world, fill = "lightgray", color = "darkgray") +   geom_sf(data = geo_join_sf, aes(color = residual)) + scale_color_viridis_c() + 
+  labs( title = "Residuals on World Map", subtitle = "Overlay of Spatial Data and World Map", x = "Longitude", y = "Latitude" ) + theme_minimal()
+  
 ```
-
-```{r}
-set.seed(123)  # For reproducibility
-n_permutations <- 1000
-null_distribution <- numeric(n_permutations)
-
-for (i in 1:n_permutations) {
-  geo_join$permuted_cpi <- sample(geo_join$cpi_score_2021)
-  permuted_model <- lm(permuted_cpi ~ total_natural_resources_rents_percent_of_gdp, data = geo_join)
-  null_distribution[i] <- coef(permuted_model)[2]  # Slope of the model
-}
-
-library(ggplot2)
-
-null_dist_df <- data.frame(null_distribution)
-
-ggplot(null_dist_df, aes(x = null_distribution)) +
-  geom_histogram(binwidth = 0.01, color = "black", fill = "skyblue") +
- geom_vline(xintercept = observed_morans_i, color = "red", linetype = "dotted") +
-  labs(
-    title = "Null Distribution of the Slope",
-    x = "Slope under the Null Hypothesis",
-    y = "Frequency"
-  )
-
-
-```
-
-```{r}
-geo_join.nb <- dnearneigh(coords, d1 = 0, d2 = 50)
-geo_join.lw <- nb2listw(geo_join.nb, style = "W")
-sperr_mod <- spatialreg::errorsarlm(cpi_score_2021 ~ total_natural_resources_rents_percent_of_gdp,
-                        data = geo_join,
-                        listw = geo_join.lw)
-summary(sperr_mod)
-
-```
-
 
 
 Full acknowledgements:
@@ -369,3 +338,7 @@ Full acknowledgements:
 | Political regime data      | Political regime. (n.d.). Our World in Data. https://ourworldindata.org/grapher/political-regime?time=2021                                                                                           |
 | Political regime metadata  | Herre, B. (2021, December 2). The “Regimes of the World” data: how do researchers identify which countries are democracies?  Our World in Data. https://ourworldindata.org/regimes-of-the-world-data |
 | Reference course materials | Max Czapanskiy. EDS 222 Statistics for Environmental Data Science graduate course at the Bren School of Environmental  Science and Management at UCSB                                                |
+
+
+
+https://public.opendatasoft.com/explore/dataset/world-administrative-boundaries/export/?flg=en-us
