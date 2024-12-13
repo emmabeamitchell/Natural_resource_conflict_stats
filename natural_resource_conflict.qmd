@@ -327,6 +327,45 @@ ggplot() +
 ```
 
 
+```{r}
+world_join <- full_join(corrupt_resource_select, world, by = c("country" = "name_long")) 
+world_join <- world_join |> 
+  filter(!is.na(geom)) |>
+  filter(!is.na(pop)) 
+world_join <- world_join[1:135,]
+
+world_lm <- lm(cpi_score_2021 ~ total_natural_resources_rents_percent_of_gdp, data = world_join)
+
+world_join$residual <- resid(world_lm)
+
+world_join <- st_as_sf(world_join, 
+                        crs = "EPSG:4326",
+                       sf_column_name = 'geom')
+
+pts <- st_centroid(st_transform(world_join, 4326)) 
+pts <- pts |> 
+  filter(!is.na(pop)) |> 
+  filter(!is.na(geom))
+
+world_join.nb <- dnearneigh(pts, d1 = 0, d2 = 5000)
+world_join.lw <- nb2listw(world_join.nb, style = "W", zero.policy = TRUE)
+
+moran_test <- moran.test(world_join$residual, world_join.lw, zero.policy = TRUE)
+
+# Print the Moran's I test results
+print(moran_test)
+
+ggplot() + 
+  geom_sf(data = world, fill = "lightgray", color = "darkgray") +
+  geom_sf(data = world_join, aes(fill = residual, geometry = geom)) + scale_fill_gradient(low = "darkblue", high = "red")
+ + 
+  labs( title = "Residuals on World Map", subtitle = "Overlay of Spatial Data and World Map", x = "Longitude", y = "Latitude" ) + theme_minimal()
+
+
+```
+
+
+
 Full acknowledgements:
 
 
@@ -341,4 +380,3 @@ Full acknowledgements:
 
 
 
-https://public.opendatasoft.com/explore/dataset/world-administrative-boundaries/export/?flg=en-us
